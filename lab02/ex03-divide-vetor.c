@@ -29,26 +29,28 @@ int main(int argc, char **argv) {
 
     for (int i = 0; i < numeroFilhosTotal; ++i) {
         pid = fork(); // cria o 1 filho
-        if (!pid) { // se for filho ele continua para criacao do resto, se nao ele quebra
+        if (!pid) {   // se for filho ele continua para criacao do resto, se nao ele quebra
             filhosCriados++;
-            if (filhosCriados > numeroFilhosTotal) break; // caso o numero de filhos venha a ultrapassar o total
-        } else {
-            break;
-        }
+            if (filhosCriados > numeroFilhosTotal) break;           // caso o numero de filhos venha a ultrapassar o total
+        } else break;
     }
 
-    if (filhosCriados == 1) { // Se for o 1 filho a ser criado ele comeca do 0
+    if (filhosCriados == 1) {  // Se for o 1 filho a ser criado ele comeca do 0
         inicio = 0;
     } else {
-        inicio = (tamVetor / numeroFilhosTotal) * filhosCriados; // se nao calcula o inicio com base de quantos filhos criado
+        inicio = (tamVetor / numeroFilhosTotal) * filhosCriados;
+        // se nao calcula o inicio com base de quantos filhos criado
         // Vetor de 100 numeros, 2 filho criado comecaria pelo 25 ate o 50
     }
-    fim = (tamVetor / numeroFilhosTotal) * (filhosCriados + 1);  // calcula o fim com base na mesma logica de cima porem com +1 no filhos criados para achar o fim
+    fim = (tamVetor / numeroFilhosTotal) * (filhosCriados + 1);
+    // calcula o fim com base na mesma logica de cima porem com +1 no filhos criados para achar o fim
 
 
-    if (fim > tamVetor) fim = tamVetor; // para evitar um null pointer, se o fim for maior que o vetor ele automaticamente recebe o tamanho do vetor
+    if (fim > tamVetor) fim = tamVetor;                             // para evitar um null pointer, se o fim for maior
+    // que o vetor ele automaticamente recebe o tamanho do vetor
 
-    for (int i = inicio; i < fim; ++i) { // Percorre o vetor do inicio ao fim ja pre-definido para aquele processo
+    for (int i = inicio; i < fim; ++i) {                            // Percorre o vetor do inicio ao fim ja
+        // pre-definido para aquele processo
         if (vector[i] == numeroProcurado) {
             printf("O %d° filho com o PID: %d conseguiu achar o valor no indice %d do vetor.\n", filhosCriados + 1,
                    getpid(), i);
