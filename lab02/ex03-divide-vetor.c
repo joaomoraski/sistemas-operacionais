@@ -52,8 +52,7 @@ int main(int argc, char **argv) {
     for (int i = inicio; i < fim; ++i) {                            // Percorre o vetor do inicio ao fim ja
         // pre-definido para aquele processo
         if (vector[i] == numeroProcurado) {
-            printf("O %d° filho com o PID: %d conseguiu achar o valor no indice %d do vetor.\n", filhosCriados + 1,
-                   getpid(), i);
+            printf("O %d° filho com o PID: %d conseguiu achar o valor no indice %d do vetor.\n", filhosCriados + 1, getpid(), i);
             // + 1 para que possa aparecer o numero do filho certo na log
         }
     }

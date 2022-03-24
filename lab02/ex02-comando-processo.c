@@ -9,15 +9,16 @@
 
 int main(int argc, char **argv) {
     int status;
-    char cmd[300];
+    char path[300] = "/bin/";
     if (argc > 2 || argc == 1) {             // o primeiro parametro é o nome do arquivo
         printf("Digite apenas a quantidade de parametros permitida(1)\n");
         return 0;
     }
     pid_t pid = fork();                     // cria filho
     if (!pid) {                             // filho
-        strcpy(cmd, argv[1]);
-        system(cmd);
+        strcat(path, argv[1]);
+        char *cmd[] = {argv[1], (char *) 0};
+        execv(path, cmd);
     } else {                                // pai
         wait(&status);              // espera o filho executar
     }

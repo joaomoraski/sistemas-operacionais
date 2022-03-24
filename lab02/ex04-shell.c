@@ -14,7 +14,7 @@ int compare(char command[300], char exitCondition[300]) {
     else len = strlen(exitCondition);
 
     for (int i = 0; i < len; ++i) {
-        if (command[i] != exitCondition[i]){
+        if (command[i] != exitCondition[i]) {
             return 0;
         }
     }
@@ -35,8 +35,8 @@ void shell() {
             if (command[i] == '&') {
                 childPid = fork();
                 if (childPid == 0) {
-                    system(command);
                     printf("Comando executado em segundo plano: %s\n", command);
+                    system(command);
                     kill(getpid(), SIGKILL);
                 }
             }
