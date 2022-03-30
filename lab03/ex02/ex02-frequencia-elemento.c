@@ -40,18 +40,18 @@ void *createThread(void *param) {
 
 int main() {
     pthread_t vecThreads[2];
-    int *vector = random_vector(1000, 10, 42), init, final;
+    int *vector = random_vector(1000, 10, 42), initialPosition, finalPosition;
     for (int i = 0; i < 2; ++i) {
 
         /*
          * Calculo do inicio e do fim do vetor para a divisao ficar correta
          * */
-        init = i * (1000 / 2);
-        if (i + 1 > 2) final = 1000;
-        else final = ((1000 / 2) - 1) * (i + 1);
+        initialPosition = i * (1000 / 2);
+        if (i + 1 > 2) finalPosition = 1000;
+        else finalPosition = ((1000 / 2) - 1) * (i + 1);
 
         // Criacao da struct da thread
-        ThreadInfo *threadInfo = createThreadStruct(init, final, i, vector);
+        ThreadInfo *threadInfo = createThreadStruct(initialPosition, finalPosition, i, vector);
 
         pthread_create(&vecThreads[i], NULL, createThread, (void *) threadInfo);
     }
