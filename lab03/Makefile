@@ -9,9 +9,9 @@ PROGS=$(P1) $(P2) $(P3)
 compile: $(PROGS)
 
 $(P1):
-	$(CC) $(P1).c -o $(P1) -lm
+	$(CC) $(P1).c -o $(P1) -lpthread
 $(P2):
-	$(CC) $(P2).c -o $(P2)
+	$(CC) $(P2).c -o $(P2) -lpthread
 $(P3):
 	$(CC) $(P3).c -o $(P3)
 

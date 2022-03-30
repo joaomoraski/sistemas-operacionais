@@ -3,17 +3,20 @@
 //
 #include "stdio.h"
 #include "stdlib.h"
+#include "pthread.h"
 
 typedef struct SearchInfo {
-    int initialPosition, finalPosition, threadPosition, *array;
+    int initialPosition, finalPosition, threadPosition, *vector, key;
 } SearchInfo;
 
-SearchInfo *createSearch(int initialPosition, int finalPosition, int threadPosition, int *array) {
-    SearchInfo searchInfo = (SearchInfo*) malloc(sizeof(SearchInfo));
-    searchInfo.initialPosition = initialPosition;
-    searchInfo.finalPosition = finalPosition;
-    searchInfo.array = array;
-    searchInfo.threadPosition = threadPosition;
+// Usando uma ideia baseada na orientacao objeto e no exercicio 03 de exemplos, seria mais facil instanciar structs das threads do que criar uma por uma manualmente
+SearchInfo *createSearch(int initialPosition, int finalPosition, int threadPosition, int *vector, int key) {
+    SearchInfo *searchInfo = (SearchInfo *) malloc(sizeof(SearchInfo));
+    searchInfo->initialPosition = initialPosition;
+    searchInfo->finalPosition = finalPosition;
+    searchInfo->vector = vector;
+    searchInfo->key = key;
+    searchInfo->threadPosition = threadPosition;
     return searchInfo;
 };
 
@@ -26,23 +29,39 @@ int *random_vector(int n, int max, int seed) {
     return vector;
 }
 
+void *createThread(void *param) {
+    struct SearchInfo *thread = param;
+    for (int i = thread->initialPosition; i < thread->finalPosition; ++i) {
+        if (thread->vector[i] == thread->key) {
+            // +1 para mostrar certo no log
+            printf("A %d° thread encontrou o valor %d no vetor.\n", thread->threadPosition + 1, thread->key);
+        }
+    }
+}
 
 int main(int argc, char **argv) {
-    if (argc > 3) return printf("Quantidade de parametros errada");
-    if (argc < 3) {
-        printf("Informe o numero de threads e o valor a procurar na execução do programa e o tamanho do vetor");
-        return;
+    if (argc > 4) return printf("Quantidade de parametros errada");
+    if (argc < 4) {
+        printf("Informe o numero de threads e o valor a procurar na execução do programa e o tamanho do vetor\n");
+        return 0;
     }
-    int threads = atoi(argv[1]), search = atoi(argv[2]), vetLen = atoi(argv[3]);
-    if (threads > 15) return 0;
-    int *vector = random_vector(vetLen, 100, 42);
-    int divs = vetLen / threads, init = 0, final = 0;
-    if (divs == 1) {
-        init = 0;
-        final = vetLen;
+    int nThreads = atoi(argv[1]), search = atoi(argv[2]), vetLen = atoi(argv[3]), init, final;
+    if (nThreads > 8) return 0;
+
+    pthread_t vecThreads[nThreads];
+    int *vector = random_vector(vetLen, 10, 42);
+
+    for (int i = 0; i < nThreads; ++i) {
+        init = i * (vetLen / nThreads);
+        if (i + 1 > nThreads) final = vetLen;
+        else final = ((vetLen / nThreads) - 1) * (i + 1);
+
+        SearchInfo *searchInfo = createSearch(init, final, i, vector, search);
+
+        pthread_create(&vecThreads[i], NULL, createThread, (void *) searchInfo);
     }
 
-
+    pthread_exit(0);
     return 0;
 }
 
