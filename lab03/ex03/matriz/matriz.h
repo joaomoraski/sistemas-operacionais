@@ -17,3 +17,6 @@ int** read_matrix_from_file(char* filename, int *row, int *col);
 
 /*  exibe uma matrix row x col */
 void print_matrix(int** matrix, int row, int col);
+
+/*  gera uma matriz e ja seta ela em um arquivo para ser lido futuramente */
+void writeMatrizToFile(int row, int col);

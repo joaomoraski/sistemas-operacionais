@@ -10,7 +10,7 @@
 #include "matriz/matriz.h"
 #include "sorts/quicksort.h"
 
-#define SIZE 1000
+#define SIZE 20
 
 typedef struct ThreadInfo {
     int initialPosition, finalPosition, threadPosition, **matriz;
@@ -57,7 +57,9 @@ int main(int argc, char **argv) {
     pthread_t vecThreadsA[nThreads];
     pthread_t vecThreadsB[nThreads];
     // le a matriz gerada na linha anteior
-    int **matriz = create_matrix(row, col);
+    writeMatrizToFile(row, col); // gerando a matriz para o arquivo entry_data
+
+    int **matriz = read_matrix_from_file("entry_data.in", &row, &col);
     for (int i = 0; i < nThreads; ++i) {
         /*
          * Calculo do inicio e do fim do vetor para a divisao ficar correta
@@ -71,6 +73,34 @@ int main(int argc, char **argv) {
 
         pthread_create(&vecThreadsA[i], NULL, mediana, (void *) threadInfo);
     }
+
+    for (int i = 0; i < nThreads; ++i) {
+        /*
+         * Calculo do inicio e do fim do vetor para a divisao ficar correta
+         * */
+        init = i * (SIZE / nThreads);
+        if (i + 1 > nThreads) final = SIZE;
+        else final = ((SIZE / nThreads) - 1) * (i + 1);
+
+        // Criacao da struct da thread
+        ThreadInfo *threadInfo = createThreadStruct(init, final, i, matriz);
+
+        pthread_create(&vecThreadsB[i], NULL, mediaAritmetica, (void *) threadInfo);
+    }
+
+    for (int i = 0; i < nThreads; ++i) {
+        pthread_join(vecThreadsA[i], NULL);
+        pthread_join(vecThreadsB[i], NULL);
+    }
+
+    for (int i = 0; i < SIZE; ++i) {
+        printf("Mediana: %d\n", medianaVec[i]);
+    }
+
+    for (int i = 0; i < SIZE; ++i) {
+        printf("media: %d\n", mediaAritmeticaVec[i]);
+    }
+
 
     return 0;
 }
