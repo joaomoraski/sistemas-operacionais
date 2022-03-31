@@ -52,8 +52,6 @@ int **read_matrix_from_file(char *filename, int *row, int *col) {
 
     fclose(fd);
 
-    printf("\nrow dos cara: %d\n", r);
-    printf("\ncol dos cara: %d\n", c);
     *row = r;
     *col = c;
     return m;
