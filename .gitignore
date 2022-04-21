@@ -197,6 +197,7 @@ fabric.properties
 .history
 .ionide
 CMakeLists.txt
+cmake-build-debug
 # Support for Project snippet scope
 
 # End of https://www.toptal.com/developers/gitignore/api/c,c++,jetbrains+all,visualstudiocode,linux
