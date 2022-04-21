@@ -196,7 +196,7 @@ fabric.properties
 # Ignore all local history of files
 .history
 .ionide
-
+CMakeLists.txt
 # Support for Project snippet scope
 
 # End of https://www.toptal.com/developers/gitignore/api/c,c++,jetbrains+all,visualstudiocode,linux
