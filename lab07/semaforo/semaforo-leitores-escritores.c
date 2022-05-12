@@ -1,3 +1,9 @@
+/*
+    * Funcionalidade: Programa para resolver o problema de Leitores e Escritores utilizando Semáforo.
+    * Alunos: Caio Luiz dos Santos, Flávio Augusto Bernaski da Silva, João Vitor Moraski Lunkes
+    * Data: 12/05/2022
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -5,15 +11,78 @@
 #include <pthread.h>
 #include <semaphore.h>
 
-void leitor(void *threadId);
-void escritor(void *threadId);
+sem_t mutex, mutexLeitor; //Mutex
+int leitorLock = 1; //Fecha a entrada de leitores
+int leitores = 0; //Número de leitores
+int bloqueado = 0; //Variável para mostrar qual foi o leitor bloqueado sem que fique muito lixo na tela
 
-sem_t mutex, mutexLeitor;
-int leitorLock = 1, leitores = 0, bloqueado = 0;
+//Função leitor para ler o buffer, recebe de parâmetro a thread utilizada
+void leitor(void *threadId) {
+    int threadIdVar = *((int*) threadId); //Define o ID do leitor de acordo com a thread
+    while(1) {
+        //Verifica se o leitor está bloqueado
+        if (!leitorLock) {
+            bloqueado = 0; //Reseta a variável bloqueado para controle de bloqueios futuros
+
+            //Usa semáforo para utilizar a variável compartilhada
+            sem_wait(&mutexLeitor);
+            leitores++;
+            sem_post(&mutexLeitor);
+
+            //Abre o buffer.txt, lê o que tem nele e escreve na varíavel buffer
+            int buffer;
+            FILE *arq = fopen("buffer.txt", "r");
+            fscanf(arq, "%d", &buffer);
+            fclose(arq);
+
+            printf("Leitor ID %d leu o que o Escritor ID %d escreveu.\nTotal de leitores: %d\n", threadIdVar, buffer, leitores);
+
+            sleep(1); //Simulação de processamento
+
+            //Usa semáforo para utilizar a variável compartilhada
+            sem_wait(&mutexLeitor);
+            leitores--;
+            sem_post(&mutexLeitor);
+            //Caso esteja bloqueado
+        } else {
+            //Verifica se já printou o leitor bloqueado, caso não tenha printado, printa e aumenta o valor de bloqueado, que são as tentativas falhas
+            if (bloqueado == 0) {
+                printf("Leitor ID %d bloqueado pelo bloqueador de leitura.\n", threadIdVar);
+                bloqueado++;
+            }
+        }
+    }
+}
+
+void escritor(void *threadId) {
+    int threadIdVar = *((int*) threadId); //Define o ID do leitor de acordo com a thread
+    while(1) {
+        //Usa semáforo para bloquear que os leitores leiam o buffer
+        sem_wait(&mutex);
+        leitorLock = 1;
+
+        //Abre o buffer.txt e escreve nele
+        FILE *arq = fopen("buffer.txt", "w");
+        fprintf(arq, "%d", threadIdVar);
+        fclose(arq);
+
+        printf("Escritor ID %d escreveu.\n", threadIdVar);
+
+        sleep(1); //Simulação de processamento
+
+        //desbloqueia os leitores
+        leitorLock = 0;
+
+        //Espera entre os escritores
+        sleep(2);
+        sem_post(&mutex);
+        sleep(3);
+    }
+}
 
 int main(int argc, char *argv[]) {
     //Verificacao das informacoes necessarias
-    if (argc < 3) return printf("./$ <N_Threads> <Proporcao>\n");
+    if (argc < 3) return printf("./$ <Numero de Threads> <Proporcao>\n");
     int nThread = atoi(argv[1]);
     int chance = atoi(argv[2]);
     if (nThread < 2) nThread = 2;
@@ -44,55 +113,4 @@ int main(int argc, char *argv[]) {
     sem_destroy(&mutex);
     pthread_exit(NULL);
     return 1;
-}
-
-void leitor(void *threadId) {
-    int threadIdVar = *((int*) threadId);
-    while(1) {
-        if (!leitorLock) {
-            bloqueado = 0;
-            sem_wait(&mutexLeitor);
-            leitores++;
-            sem_post(&mutexLeitor);
-
-            int buffer;
-            FILE *arq = fopen("arquivo.txt", "r");
-            fscanf(arq, "%d", &buffer);
-            fclose(arq);
-
-            printf("Leitor ID %d leu o que o Escritor ID %d escreveu.\nTotal de leitores: %d\n", threadIdVar, buffer, leitores);
-
-            sleep(1);
-
-            sem_wait(&mutexLeitor);
-            leitores--;
-            sem_post(&mutexLeitor);
-        } else {
-            if (bloqueado == 0) {
-                printf("Leitor ID %d bloqueado pelo bloqueador de leitura.\n", threadIdVar);
-                bloqueado++;
-            }
-        }
-    }
-}
-
-void escritor(void *threadId) {
-    int threadIdVar = *((int*) threadId);
-    while(1) {
-        sem_wait(&mutex);
-        leitorLock = 1;
-
-        FILE *arq = fopen("arquivo.txt", "w");
-        fprintf(arq, "%d", threadIdVar);
-        fclose(arq);
-
-        printf("Escritor ID %d escreveu.\n", threadIdVar);
-
-        sleep(1);
-
-        leitorLock = 0;
-        sleep(2);
-        sem_post(&mutex);
-        sleep(3);
-    }
 }
