@@ -12,6 +12,10 @@
 .idea/**/dictionaries
 .idea/**/shelf
 
+generated_matrix.txt
+result.txt
+ativ
+
 # AWS User-specific
 .idea/**/aws.xml
 .idea
