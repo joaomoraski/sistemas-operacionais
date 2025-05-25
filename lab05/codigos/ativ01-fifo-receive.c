@@ -62,29 +62,3 @@ int main(int argc, char* argv[]) {
 
     return EXIT_SUCCESS;
 }
-
-
-void read_entry(int argc, char* argv[], char* entry) {
-    if (argc < 2) {
-        printf("Informe a mensagem(100 caracteres): ");
-        scanf("%100[^\n]", entry);
-    }
-    else {
-        strncpy(entry, argv[1], MAX);
-    }
-}
-
-void make_logic(const char* buffer) {
-    int vogais = 0, consoantes = 0, espacos = 0;
-    for (int i = 0; i < strlen(buffer); i++) {
-        char c = tolower(buffer[i]);
-        if (strchr("aeiou", c)) vogais++;
-        else if (c >= 'a' && c <= 'z') consoantes++;
-        else if (c == ' ') espacos++;
-    }
-    printf("Frase informada: %s\n", buffer);
-    printf("Tamanho: %lu\n", strlen(buffer));
-    printf("Número de vogais: %d\n", vogais);
-    printf("Número de consoantes: %d\n", consoantes);
-    printf("Número de espaços: %d\n", espacos);
-}

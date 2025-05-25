@@ -13,9 +13,8 @@ pendentes e fechar o arquivo.
 #include <unistd.h>
 #include <string.h>
 
-// Nome do arquivo
+// nome do aqruivo
 #define FILENAME "log.txt"
-// Maximo de buffer pendente
 #define MAX_PENDING_DATA 256
 
 FILE* data_file = NULL;
@@ -84,7 +83,7 @@ int main() {
         // Se o programa não foi parado, escreve o que esta pendente no arquivo
         if (program_active && strlen(pending_data) > 0) {
             fprintf(data_file, "RECORD: %s\n", pending_data);
-            fflush(data_file); // farante que foi escrito
+            fflush(data_file); // garante que foi escrito
             pending_data[0] = '\0'; // limpa o conteudo pendente
         }
     }

@@ -14,5 +14,17 @@ run02:
 	gcc ativ02.c -o ativ
 	./ativ
 
+run03:
+	gcc ativ03.c utils/utils.c -o ativ
+	./ativ
+
+run04-client:
+	gcc ativ04-client.c -o ativ-client
+	./ativ-client
+
+run04-server:
+	gcc ativ04-server.c -o ativ-server
+	./ativ-server
+
 clean:
-	rm -rfd ativ-* ativ log.txt
+	rm -rfd ativ-* ativ log.txt result.txt

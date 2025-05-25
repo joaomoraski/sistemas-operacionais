@@ -1,0 +1,1 @@
+void write_vectors_to_file(int* v1, int* v2, int* v3, int num_elements);
